@@ -1,0 +1,26 @@
+{
+  "name": "node-chat-app",
+  "version": "1.0.0",
+  "description": "Udemy NodeJS Course",
+  "scripts": {
+    "start": "node server/server.js",
+    "test": "export NODE_ENV=test || SET \"NODE_ENV=test\" && mocha server/**/*.test.js --exit",
+    "test-watch": "nodemon --exec 'npm test'",
+    "watch": "nodemon server/server.js"
+  },
+  "engines": {
+    "node": "10.14.1"
+  },
+  "devDependencies": {
+    "mocha": "5.2.0",
+    "expect": "23.6.0",
+    "supertest": "3.3.0",
+    "nodemon": "1.18.9"
+  },
+  "dependencies": {
+    "express": "4.16.4",
+    "socket.io": "2.2.0"
+  },
+  "author": "Ahmad Hajjar",
+  "license": "ISC"
+}
