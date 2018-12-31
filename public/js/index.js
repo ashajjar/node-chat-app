@@ -10,5 +10,5 @@ socket.on('disconnect', function () {
 
 socket.on('newMessage', function (message) {
   console.log(message);
-  $('body').append('New Message('+message.createdAt+'):<br/>'+message.text+'<br/>');
+  $('body').append('New Message('+message.createdAt+') from ('+message.from+'):<br/>'+message.text+'<br/>');
 });
