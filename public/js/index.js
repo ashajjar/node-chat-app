@@ -18,7 +18,10 @@ $(document).ready(function () {
     socket.emit('createMessage', {
       from: 'a user',
       text: $('#message').val()
-    }, function (response) { });
+    }, function (response) {
+      $('#message').val('');
+
+    });
     return false;
   });
 })
