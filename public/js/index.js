@@ -13,6 +13,10 @@ $(document).ready(function () {
     $('#messages').append('<li>' + message.from + ' says :' + message.text + '</li>');
   });
 
+  socket.on('newLocationMessage', function (message) {
+    $('#messages').append('<li>' + message.from + ' shared their <a href=' + message.url + ' target="new">location</a></li>');
+  });
+
   $('#message-form').on('submit', function (e) {
     e.preventDefault();
     socket.emit('createMessage', {
@@ -23,5 +27,22 @@ $(document).ready(function () {
 
     });
     return false;
+  });
+
+  let sendLocationBtn = $('#send-location');
+
+  sendLocationBtn.on('click', function () {
+    if (!navigator.geolocation) {
+      return alert('Sorry. Your browser does not support geolocaiton');
+    }
+
+    navigator.geolocation.getCurrentPosition(function (position) {
+      socket.emit('createLocationMessage', {
+        lng: position.coords.longitude,
+        lat: position.coords.latitude
+      });
+    }, function (err) {
+      alert('Unable to fetch your locaiton');
+    });
   });
 })
