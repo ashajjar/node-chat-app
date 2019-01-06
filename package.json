@@ -21,7 +21,8 @@
   "dependencies": {
     "express": "4.16.4",
     "socket.io": "2.2.0",
-    "moment": "2.23.0"
+    "moment": "2.23.0",
+    "lodash": "4.17.11"
   },
   "author": "Ahmad Hajjar",
   "license": "ISC"
