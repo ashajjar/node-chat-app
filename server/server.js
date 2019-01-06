@@ -16,10 +16,6 @@ app.use(express.static(publicPath));
 io.on('connection', (socket) => {
   console.log('New user connected');
 
-  socket.emit('newMessage', generateMessage('Admin', 'Welcome to the chat'));
-
-  socket.broadcast.emit('newMessage', generateMessage('Admin', 'a new user have joined the chat'));
-
   socket.on('join', (params, callback) => {
     if (!_.isString(params.name) || !_.isString(params.room)) {
       return callback('Name and room should be strings');
@@ -27,6 +23,9 @@ io.on('connection', (socket) => {
     if (_.isEmpty(params.name.trim()) || _.isEmpty(params.room.trim())) {
       return callback('Name and room cannot be empty');
     }
+    socket.join(params.room);
+    socket.emit('newMessage', generateMessage('Admin', `Hello ${params.name}. Welcome to the chat`));
+    socket.broadcast.to(params.room).emit('newMessage', generateMessage('Admin', `${params.name} have joined the chat`));
     callback();
   });
 

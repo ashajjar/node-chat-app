@@ -25,6 +25,7 @@ $(document).ready(function () {
         alert(err);
         window.location.href = '/';
       } else {
+        window.document.title = params.room+' | Chat';
         console.log('Joined')
       }
     })
