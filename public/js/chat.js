@@ -35,7 +35,7 @@ $(document).ready(function () {
 
   socket.on('usersListUpdated', function (users) {
     var ol = $('<ol></ol>');
-    users.forEach(function(user){
+    users.forEach(function (user) {
       ol.append($('<li></li>').text(user));
     });
     $('#users').html(ol);
@@ -71,11 +71,12 @@ $(document).ready(function () {
       return false;
     }
     socket.emit('createMessage', {
-      from: 'a user',
       text: $('#message').val()
     }, function (response) {
       $('#message').val('');
-
+      if (response) {
+        $('#message').val(response);
+      }
     });
     return false;
   });
@@ -94,6 +95,11 @@ $(document).ready(function () {
       socket.emit('createLocationMessage', {
         lng: position.coords.longitude,
         lat: position.coords.latitude
+      }, function (response) {
+        $('#message').val('');
+        if (response) {
+          $('#message').val(response);
+        }
       });
     }, function (err) {
       sendLocationBtn.removeAttr('disabled').text('Send location');

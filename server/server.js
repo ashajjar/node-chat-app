@@ -38,12 +38,23 @@ io.on('connection', (socket) => {
   });
 
   socket.on('createMessage', (message, callback) => {
-    io.emit('newMessage', generateMessage(message.from, message.text));
-    callback();
+    var user = users.getUser(socket.id);
+    if (user) {
+      io.to(user.room).emit('newMessage', generateMessage(user.name, message.text));
+      return callback();
+    }
+
+    callback('User is logged out');
   });
 
-  socket.on('createLocationMessage', (postion) => {
-    io.emit('newLocationMessage', generateLocationMessage('Admin', postion.lat, postion.lng));
+  socket.on('createLocationMessage', (postion, callback) => {
+    var user = users.getUser(socket.id);
+    if (user) {
+      io.to(user.room).emit('newLocationMessage', generateLocationMessage(user.name, postion.lat, postion.lng));
+      return callback();
+    }
+
+    callback('User is logged out');
   });
 
   socket.on('disconnect', () => {
