@@ -5,17 +5,20 @@ const socketIO = require('socket.io');
 const _ = require('lodash');
 
 const { generateMessage, generateLocationMessage } = require('./utils/message');
+const { Users } = require('./utils/users');
+
 const publicPath = path.join(__dirname, '../public');
 const port = process.env.PORT || 3000;
+
 var app = express();
 var server = http.createServer(app);
 var io = socketIO(server);
 
+let users = new Users();
+
 app.use(express.static(publicPath));
 
 io.on('connection', (socket) => {
-  console.log('New user connected');
-
   socket.on('join', (params, callback) => {
     if (!_.isString(params.name) || !_.isString(params.room)) {
       return callback('Name and room should be strings');
@@ -24,8 +27,13 @@ io.on('connection', (socket) => {
       return callback('Name and room cannot be empty');
     }
     socket.join(params.room);
+
+    users.removeUser(socket.id);
+    users.addUser(socket.id, params.name, params.room);
+    io.to(params.room).emit('usersListUpdated', users.getUserList(params.room));
+
     socket.emit('newMessage', generateMessage('Admin', `Hello ${params.name}. Welcome to the chat`));
-    socket.broadcast.to(params.room).emit('newMessage', generateMessage('Admin', `${params.name} have joined the chat`));
+    socket.broadcast.to(params.room).emit('newMessage', generateMessage('Admin', `${params.name} has joined the chat`));
     callback();
   });
 
@@ -39,7 +47,11 @@ io.on('connection', (socket) => {
   });
 
   socket.on('disconnect', () => {
-    console.log('User was disconnected');
+    let user = users.removeUser(socket.id);
+    if (user) {
+      io.to(user.room).emit('usersListUpdated', users.getUserList(user.room));
+      io.to(user.room).emit('newMessage', generateMessage('Admin', `${user.name} has left the chat`));
+    }
   });
 });
 
