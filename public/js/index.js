@@ -1,3 +1,4 @@
+
 $(document).ready(function () {
   var socket = io();
 
@@ -10,11 +11,13 @@ $(document).ready(function () {
   });
 
   socket.on('newMessage', function (message) {
-    $('#messages').append('<li>' + message.from + ' says :' + message.text + '</li>');
+    var formattedTime = moment(message.createdAt).format('MMM Do, YYYY h:mm A');
+    $('#messages').append(`<li> [${formattedTime}] ` + message.from + ' says :' + message.text + '</li>');
   });
 
   socket.on('newLocationMessage', function (message) {
-    $('#messages').append('<li>' + message.from + ' shared their <a href=' + message.url + ' target="new">location</a></li>');
+    var formattedTime = moment(message.createdAt).format('MMM Do, YYYY h:mm A');
+    $('#messages').append(`<li> [${formattedTime}] ` + message.from + ' shared their <a href=' + message.url + ' target="new">location</a></li>');
   });
 
   $('#message-form').on('submit', function (e) {
