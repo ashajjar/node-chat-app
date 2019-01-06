@@ -1,3 +1,18 @@
+function scrollToBottom() {
+  var messages = $('#messages');
+  var lastMessage = messages.children('li:last-child');
+  var beforeLastMessage = lastMessage.prev();
+
+  var clientHeight = messages.prop('clientHeight');
+  var scrollTop = messages.prop('scrollTop');
+  var scrollHeight = messages.prop('scrollHeight');
+  var lastMessageHeight = lastMessage.innerHeight();
+  var beforeLastMessageHeight = beforeLastMessage.innerHeight();
+
+  if (clientHeight + scrollTop + lastMessageHeight + beforeLastMessageHeight >= scrollHeight) {
+    messages.scrollTop(scrollHeight);
+  }
+}
 
 $(document).ready(function () {
   var socket = io();
@@ -19,6 +34,7 @@ $(document).ready(function () {
       text: message.text
     });
     $('#messages').append(html);
+    scrollToBottom();
   });
 
   socket.on('newLocationMessage', function (message) {
@@ -30,11 +46,12 @@ $(document).ready(function () {
       url: message.url
     });
     $('#messages').append(html);
+    scrollToBottom();
   });
 
   $('#message-form').on('submit', function (e) {
     e.preventDefault();
-    if($('#message').val().trim()===''){
+    if ($('#message').val().trim() === '') {
       return false;
     }
     socket.emit('createMessage', {
